@@ -1,36 +1,38 @@
-# This is a basic workflow to help you get started with Actions
+name: GHOST
 
-name: CI
-
-# Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the "main" branch
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
-
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
-
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+    branches:
+      - main
+  workflow_dispatch: # هذا يضيف زر "Run workflow" في واجهة GitHub
+  
 jobs:
-  # This workflow contains a single job called "build"
-  build:
-    # The type of runner that the job will run on
-    runs-on: ubuntu-latest
+  register_getscreen:
+    runs-on: windows-latest
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v4
+    - name: Check out repository
+      uses: actions/checkout@v3  # استخدام أحدث إصدار
+    
+    - name: Install Tailscale
+      run: |
+          Invoke-WebRequest -Uri https://pkgs.tailscale.com/stable/tailscale-setup-latest.exe -OutFile tailscale-setup.exe
+          Start-Process .\tailscale-setup.exe -ArgumentList "/S" -Wait
 
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
+    - name: Authenticate to Tailscale
+      run: |
+          &"C:\Program Files\Tailscale\tailscale.exe" up --auth-key tskey-auth-kXhLRTW9VB11CNTRL-HjCP5rFE4QRzAJDo24GSPRknJUipsmVWH # إدراج المفتاح مباشرة (ليس موصى به للأمان)
+      
+    - name: Change Password for runneradmin
+      run: |
+        net user runneradmin P@ssw0rd!
+      shell: powershell
+      continue-on-error: true # يتجاهل الخطأ في حالة عدم وجود صلاحيات كافية لتغيير كلمة المرور
+   
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
 
-      # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
-        run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
+    - name: Run Python Script
+      run: python count_to_infinity.py
