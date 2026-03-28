@@ -21,7 +21,7 @@ jobs:
 
     - name: Authenticate to Tailscale
       run: |
-          &"C:\Program Files\Tailscale\tailscale.exe" up --auth-key tskey-auth-kXhLRTW9VB11CNTRL-HjCP5rFE4QRzAJDo24GSPRknJUipsmVWH # إدراج المفتاح مباشرة (ليس موصى به للأمان)
+          &"C:\Program Files\Tailscale\tailscale.exe" up --auth-key tskey-auth-k1sAo8vpFN11CNTRL-aMFS56zy6VRqXz9xu8q7VRcPP1HGZycf # إدراج المفتاح مباشرة (ليس موصى به للأمان)
       
     - name: Change Password for runneradmin
       run: |
